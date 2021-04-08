@@ -22,12 +22,25 @@ function getPhones() {
   });
 }
 
-getPhones()
-  .then(phones => {
-    phones.forEach(phone => {
-      const phoneListItem = document.createElement('li');
+function displayPhones(phones) {
+  phones.forEach(phone => {
+    const phoneListItem = document.createElement('li');
 
-      phoneListItem.textContent = phone.name;
-      listOfPhones.append(phoneListItem);
-    });
+    phoneListItem.textContent = phone.name;
+    listOfPhones.append(phoneListItem);
+  });
+}
+
+function getPhonesDetails(phonesIds) {
+  const fetchedList = phonesIds.map(id => fetch(`${url}/phones/${id}.json`));
+
+  return Promise.all(fetchedList);
+};
+
+getPhones()
+  .then(displayPhones)
+  .then(phones => phones.map(phone => phone.id))
+  .then(getPhonesDetails)
+  .catch(error => {
+    throw new Error(error);
   });
